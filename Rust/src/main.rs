@@ -1,26 +1,115 @@
 fn main() {
-    let n :i32 = 3;
-    let a :[[i32;3];3] = [[2, 1, -1], [1, 2, 1], [1, 1, 1]];
-    let b :[i32;3] = [-3, 3, 2];
-    let x :[i32;3] = [0;3];
+    let n: usize = 3;
+    let a = vec![
+        vec![2.0, 1.0, -1.0],
+        vec![1.0, 2.0, 1.0],
+        vec![1.0, 1.0, 1.0],
+    ];
+    let b = vec![-3.0, 3.0, 2.0];
+    let x = vec![0.0; 3];
+    gauss_solver(n, a, b, x);
 
+    let n: usize = 3;
+    let a = vec![
+        vec![1.0, 1.0, 1.0],
+        vec![-2.0, 1.0, 1.0],
+        vec![1.0, 3.0, 1.0],
+    ];
+    let b = vec![2.0, 5.0, 4.0];
+    let x = vec![0.0; 3];
+    gauss_solver(n, a, b, x);
+
+    let n: usize = 3;
+    let a = vec![
+        vec![3.0, 2.0, -1.0],
+        vec![2.0, -2.0, 4.0],
+        vec![-1.0, 0.5, -1.0],
+    ];
+    let b = vec![1.0, -2.0, 0.0];
+    let x = vec![0.0; 3];
+    gauss_solver(n, a, b, x);
+
+    let n: usize = 2;
+    let a = vec![vec![2.0, 3.0], vec![-3.0, 3.0]];
+    let b = vec![6.0, 15.0];
+    let x = vec![0.0; 2];
+    gauss_solver(n, a, b, x);
+
+    let n: usize = 4;
+    let a = vec![
+        vec![4.0, 1.0, 2.0, -3.0],
+        vec![-3.0, 3.0, -1.0, 4.0],
+        vec![-1.0, 2.0, 5.0, 1.0],
+        vec![5.0, 4.0, 3.0, -1.0],
+    ];
+    let b = vec![-16.0, 20.0, -4.0, -10.0];
+    let x = vec![0.0; 4];
+    gauss_solver(n, a, b, x);
+
+    let n: usize = 5;
+    let a = vec![
+        vec![4.0, 1.0, 2.0, -3.0, 5.0],
+        vec![-3.0, 3.0, -1.0, 4.0, -2.0],
+        vec![-1.0, 2.0, 5.0, 1.0, 3.0],
+        vec![5.0, 4.0, 3.0, -1.0, 2.0],
+        vec![1.0, -2.0, 3.0, -4.0, 5.0],
+    ];
+    let b = vec![-16.0, 20.0, -4.0, -10.0, 3.0];
+    let x = vec![0.0; 5];
     gauss_solver(n, a, b, x);
 }
 
-fn gauss_solver(n :i32, a :[[i32;3];3], b :[i32;3], x :[i32;3]) {
-    println!("n={n}");
+fn gauss_solver(n: usize, mut a: Vec<Vec<f64>>, mut b: Vec<f64>, mut x: Vec<f64>) {
+    //ETAPA DE ESCALONAMENTO
+    for k in 0..n - 1 {
+        let mut max: f64 = a[k][k].abs();
+        let mut max_index: usize = k;
 
-    for (i, row) in a.iter().enumerate() {
-        for (j, col) in row.iter().enumerate() {
-            println!("[{}][{}]={}", i, j, col);
+        for i in k + 1..n {
+            if max < a[i][k].abs() {
+                max = a[i][k].abs();
+                max_index = i;
+            }
+        }
+
+        if max_index != k {
+            for j in 0..n {
+                let temp: f64 = a[k][j];
+                a[k][j] = a[max_index][j];
+                a[max_index][j] = temp;
+            }
+            let temp: f64 = b[k];
+            b[k] = b[max_index];
+            b[max_index] = temp;
+        }
+
+        if a[k][k] == 0.0 {
+            println!("A matriz dos coeficientes é singular\n");
+            return;
+        } else {
+            for m in k + 1..n {
+                let f: f64 = -a[m][k] / a[k][k];
+                a[m][k] = 0.0;
+                b[m] = b[m] + f * b[k];
+                for l in k + 1..n {
+                    a[m][l] = a[m][l] + f * a[k][l];
+                }
+            }
         }
     }
 
-    for (i, row) in b.iter().enumerate() {
-        println!("[{}]={}", i, row);
+    //ETAPA DE RESOLUÇÃO DO SISTEMA
+    for i in (0..=n - 1).rev() {
+        x[i] = b[i];
+        for j in i + 1..n {
+            x[i] = x[i] - x[j] * a[i][j];
+        }
+        x[i] = x[i] / a[i][i];
     }
 
-    for (i, row) in x.iter().enumerate() {
-        println!("[{}]={}", i, row);
+    //IMPRIME RESULTADO
+    for (i, value) in x.iter().enumerate() {
+        println!("x{} = {}", i, value);
     }
+    println!("");
 }
