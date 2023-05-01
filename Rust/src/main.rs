@@ -9,7 +9,7 @@ fn main() {
     ];
     let b = vec![-3.0, 3.0, 2.0];
     let x = vec![0.0; 3];
-    _gauss_solver_execution_time(n, a, b, x);
+    gauss_solver_execution_time(n, a, b, x);
 
     let n: usize = 3;
     let a = vec![
@@ -19,7 +19,7 @@ fn main() {
     ];
     let b = vec![2.0, 5.0, 4.0];
     let x = vec![0.0; 3];
-    _gauss_solver_execution_time(n, a, b, x);
+    gauss_solver_execution_time(n, a, b, x);
 
     let n: usize = 3;
     let a = vec![
@@ -29,13 +29,13 @@ fn main() {
     ];
     let b = vec![1.0, -2.0, 0.0];
     let x = vec![0.0; 3];
-    _gauss_solver_execution_time(n, a, b, x);
+    gauss_solver_execution_time(n, a, b, x);
 
     let n: usize = 2;
     let a = vec![vec![2.0, 3.0], vec![-3.0, 3.0]];
     let b = vec![6.0, 15.0];
     let x = vec![0.0; 2];
-    _gauss_solver_execution_time(n, a, b, x);
+    gauss_solver_execution_time(n, a, b, x);
 
     let n: usize = 4;
     let a = vec![
@@ -46,7 +46,7 @@ fn main() {
     ];
     let b = vec![-16.0, 20.0, -4.0, -10.0];
     let x = vec![0.0; 4];
-    _gauss_solver_execution_time(n, a, b, x);
+    gauss_solver_execution_time(n, a, b, x);
 
     let n: usize = 5;
     let a = vec![
@@ -58,19 +58,23 @@ fn main() {
     ];
     let b = vec![-16.0, 20.0, -4.0, -10.0, 3.0];
     let x = vec![0.0; 5];
-    _gauss_solver_execution_time(n, a, b, x);
+    gauss_solver_execution_time(n, a, b, x);
 }
 
-fn _gauss_solver_execution_time(n: usize, a: Vec<Vec<f64>>, b: Vec<f64>, x: Vec<f64>) {
+fn gauss_solver_execution_time(n: usize, a: Vec<Vec<f64>>, b: Vec<f64>, x: Vec<f64>) {
     let start = Instant::now();
-    gauss_solver(n, a, b, x);
+
+    for _z in 0..100000 {
+        gauss_solver(n, a.clone(), b.clone(), x.clone());
+    }
+
     let duration = start.elapsed();
 
     println!("Time elapsed in gauss_solver() is: {:?}\n", duration);
 }
 
 fn gauss_solver(n: usize, mut a: Vec<Vec<f64>>, mut b: Vec<f64>, mut x: Vec<f64>) {
-    //ETAPA DE ESCALONAMENTO
+    // ETAPA DE ESCALONAMENTO
     for k in 0..n - 1 {
         let mut max: f64 = a[k][k].abs();
         let mut max_index: usize = k;
@@ -108,7 +112,7 @@ fn gauss_solver(n: usize, mut a: Vec<Vec<f64>>, mut b: Vec<f64>, mut x: Vec<f64>
         }
     }
 
-    //ETAPA DE RESOLUÇÃO DO SISTEMA
+    // ETAPA DE RESOLUÇÃO DO SISTEMA
     for i in (0..=n - 1).rev() {
         x[i] = b[i];
         for j in i + 1..n {
@@ -117,8 +121,8 @@ fn gauss_solver(n: usize, mut a: Vec<Vec<f64>>, mut b: Vec<f64>, mut x: Vec<f64>
         x[i] = x[i] / a[i][i];
     }
 
-    //IMPRIME RESULTADO
-    for (i, value) in x.iter().enumerate() {
-        println!("x{} = {}", i, value);
-    }
+    // IMPRIME RESULTADO
+    // for (i, value) in x.iter().enumerate() {
+    //     println!("x{} = {}", i, value);
+    // }
 }
