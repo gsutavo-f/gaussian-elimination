@@ -39,3 +39,12 @@ Para rodar o programa em Rust, digite os seguintes comandos:
 
   cargo run
 ```
+
+Para rodar o programa em Golang. digite os seguintes comandos:
+```bash
+  cd Go
+  
+  go mod init clp.edu/gauss       
+  
+  go run gauss_elimination.go
+```
